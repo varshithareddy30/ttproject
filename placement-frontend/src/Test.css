@@ -1,0 +1,203 @@
+/* Premium Test Interface */
+
+.testPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 60px 20px;
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.testCard {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  width: 100%;
+  max-width: 800px;
+  padding: 50px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glass-shadow);
+  box-sizing: border-box;
+}
+
+.testTitle {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 36px;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.questionBlock {
+  margin-bottom: 32px;
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+  transition: transform var(--transition-normal);
+}
+
+.questionBlock:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.question {
+  margin-bottom: 24px;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.optionItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.optionItem:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.optionItem:has(input:checked) {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.radioArea {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.radioArea input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent-primary);
+  cursor: pointer;
+}
+
+.optionText {
+  flex: 1;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.optionItem:has(input:checked) .optionText,
+.optionItem:hover .optionText {
+  color: var(--text-primary);
+}
+
+.submitBtn {
+  width: 100%;
+  margin-top: 40px;
+  padding: 16px;
+}
+
+/* POPUP MODAL OVERRIDE to Match Theme */
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11, 14, 20, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.popupBox {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  padding: 40px;
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+}
+
+.popupBox h3 {
+  font-size: 24px;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.popupBox p {
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.popupButtons {
+  display: flex;
+  gap: 16px;
+}
+
+.cancelBtn {
+  flex: 1;
+  margin: 0;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.confirmBtn {
+  flex: 1;
+  margin: 0;
+  background: var(--gradient-primary);
+  border: none;
+  color: white;
+}
+
+/* ✨ Extra Premium Hover Effect */
+.optionItem {
+  position: relative;
+  overflow: hidden;
+}
+
+.optionItem::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.optionItem:hover::after {
+  opacity: 1;
+}
