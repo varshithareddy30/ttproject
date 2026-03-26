@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,28 @@ public class AuthService {
     StudentRepository repo;
 
     @Autowired
-    ProfileRepository profileRepo;   // ✅ ADD THIS
+    ProfileRepository profileRepo;
 
+    // ✅ AUTO CREATE ADMIN (🔥 VERY IMPORTANT)
+    @PostConstruct
+    public void createAdmin(){
+
+        if(repo.findByEmail("admin@gmail.com").isEmpty()){
+
+            Student admin = new Student();
+
+            admin.setName("Admin");
+            admin.setEmail("admin@gmail.com");
+            admin.setPassword("admin123");
+            admin.setRole("ADMIN");
+
+            repo.save(admin);
+
+            System.out.println("✅ Admin created successfully");
+        }
+    }
+
+    // ✅ REGISTER
     public Student register(Student student){
 
         if(repo.findByEmail(student.getEmail()).isPresent()){
@@ -27,14 +48,13 @@ public class AuthService {
             student.setRole("USER");
         }
 
-        // ✅ SAVE STUDENT FIRST
+        // SAVE STUDENT
         Student savedStudent = repo.save(student);
 
-        // ✅ CREATE PROFILE AUTOMATICALLY
+        // CREATE PROFILE
         Profile profile = new Profile();
         profile.setStudent(savedStudent);
 
-        // default empty values (so UI won't crash)
         profile.setSkills("");
         profile.setTargetCompany("");
         profile.setRole("");
@@ -45,6 +65,7 @@ public class AuthService {
         return savedStudent;
     }
 
+    // ✅ LOGIN
     public Student login(String email,String password){
 
         Student s = repo.findByEmail(email)
