@@ -144,7 +144,11 @@ function Dashboard() {
                                 ></div>
                             </div>
 
-                            <p>{goal.completed} / {goal.target}</p>
+                            <p>
+                                {goal.globalGoal
+                                    ? "Progress tracked per user"
+                                    : `${goal.completed} / ${goal.target}`}
+                            </p>
 
                             <div className="goal-buttons">
 

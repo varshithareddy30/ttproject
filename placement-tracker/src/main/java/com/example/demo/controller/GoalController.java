@@ -7,30 +7,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.Goal;
+import com.example.demo.model.Progress;
+import com.example.demo.model.Student;
 import com.example.demo.service.GoalService;
+import com.example.demo.repository.ProgressRepository;
+import com.example.demo.repository.StudentRepository;
 
 @RestController
 @RequestMapping("/goal")
-@CrossOrigin(origins="http://localhost:3000")
+@CrossOrigin(origins="*")
 public class GoalController {
 
     @Autowired
     GoalService service;
 
+    @Autowired
+    ProgressRepository progressRepo;
+
+    @Autowired
+    StudentRepository studentRepo;
+
     // ✅ CREATE USER GOAL
     @PostMapping("/create")
     public Goal createGoal(@RequestBody Goal goal){
-        goal.setGlobalGoal(false); // 🔥 important
+        goal.setGlobalGoal(false);
         return service.createGoal(goal);
     }
 
-    // ✅ GET ONLY USER GOALS (OLD)
+    // ✅ USER GOALS ONLY
     @GetMapping("/student/{id}")
     public List<Goal> getStudentGoals(@PathVariable Long id){
         return service.getStudentGoals(id);
     }
 
-    // ✅ NEW: GET USER + GLOBAL GOALS
+    // ✅ USER + GLOBAL GOALS
     @GetMapping("/all/{id}")
     public List<Goal> getAllGoals(@PathVariable Long id){
 
@@ -44,29 +54,32 @@ public class GoalController {
         return allGoals;
     }
 
-    // ✅ DELETE (only user goals should be deleted from frontend)
+    // ✅ DELETE GOAL
     @DeleteMapping("/{id}")
     public String deleteGoal(@PathVariable Long id){
-
         service.deleteGoal(id);
-
         return "Goal Deleted";
     }
 
-    // ✅ UPDATE SCORE
-    @PutMapping("/updateScore/{goalId}/{score}")
-    public Goal updateScore(@PathVariable Long goalId, @PathVariable int score) {
+    // 🔥 FIXED: SAVE SCORE PER USER
+    @PutMapping("/updateScore/{goalId}/{score}/{studentId}")
+    public String updateScore(
+            @PathVariable Long goalId,
+            @PathVariable int score,
+            @PathVariable Long studentId) {
 
         Goal goal = service.getGoalById(goalId);
 
-        int newCompleted = goal.getCompleted() + score;
+        Student student = studentRepo.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        if(newCompleted > goal.getTarget()){
-            newCompleted = goal.getTarget();
-        }
+        Progress progress = new Progress();
+        progress.setGoal(goal);
+        progress.setStudent(student);
+        progress.setScore(score);
 
-        goal.setCompleted(newCompleted);
+        progressRepo.save(progress);
 
-        return service.saveGoal(goal);
+        return "Score saved";
     }
 }

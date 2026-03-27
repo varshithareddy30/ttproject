@@ -63,19 +63,15 @@ function Test() {
 
             let q = questions[i]
 
-            // ✅ MCQ FIXED LOGIC
             if (q.options) {
 
                 let selected = answers[i]
 
-                // Case 1: exact match
                 if (selected === q.correctAnswer) {
                     score++
                 }
 
-                // Case 2: A/B/C/D format
                 else if (q.correctAnswer && q.correctAnswer.length === 1) {
-
                     const selectedIndex = q.options.findIndex(opt => opt === selected)
                     const correctIndex = q.correctAnswer.charCodeAt(0) - 65
 
@@ -85,11 +81,8 @@ function Test() {
                 }
             }
 
-            // ✅ CODING EVALUATION
             else {
-
                 try {
-
                     const res = await axios.post("/test/evaluate", {
                         question: q.question,
                         code: answers[i] || ""
@@ -102,17 +95,15 @@ function Test() {
                         score++
                     }
 
-                    if (parsed?.feedback) {
-                        alert(parsed.feedback)
-                    }
-
                 } catch (err) {
                     console.error("Evaluation error", err)
                 }
             }
         }
 
-        await axios.put(`/goal/updateScore/${goalId}/${score}`)
+        const studentId = localStorage.getItem("studentId")
+
+        await axios.put(`/goal/updateScore/${goalId}/${score}/${studentId}`)
 
         alert(`Your Score: ${score}/${questions.length}`)
 

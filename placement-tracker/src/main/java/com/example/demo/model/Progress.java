@@ -14,10 +14,17 @@ public class Progress {
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
-
+    
+    @ManyToOne
+    @JoinColumn(name = "goal_id")
+    private Goal goal;
+    
+    
     public Long getId() {
         return id;
     }
+    
+    
 
     public Integer getScore() {
         return score;
@@ -37,5 +44,12 @@ public class Progress {
 
     public void setStudent(Student student) {
         this.student = student;
+    }
+    public Goal getGoal() {
+        return goal;
+    }
+
+    public void setGoal(Goal goal) {
+        this.goal = goal;
     }
 }
