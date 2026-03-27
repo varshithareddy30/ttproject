@@ -73,12 +73,22 @@ public class GoalController {
         Student student = studentRepo.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
+        // ✅ SAVE IN PROGRESS (correct logic)
         Progress progress = new Progress();
         progress.setGoal(goal);
         progress.setStudent(student);
         progress.setScore(score);
-
         progressRepo.save(progress);
+
+        // 🔥 ALSO UPDATE GOAL (UI fix)
+        int newCompleted = goal.getCompleted() + score;
+
+        if(newCompleted > goal.getTarget()){
+            newCompleted = goal.getTarget();
+        }
+
+        goal.setCompleted(newCompleted);
+        service.saveGoal(goal);
 
         return "Score saved";
     }
