@@ -75,6 +75,21 @@ function AdminDashboard() {
             alert("Error creating goal")
         }
     }
+    const deleteGoal = async (goalId) => {
+
+        if (!window.confirm("Delete this goal?")) return
+
+        try {
+            await axios.delete(`/goal/${goalId}`)
+
+            // UI update
+            setSelectedGoals(selectedGoals.filter(g => g.id !== goalId))
+
+        } catch (err) {
+            console.error("Delete error", err)
+            alert("Error deleting goal")
+        }
+    }
 
     return (
 
@@ -135,7 +150,12 @@ function AdminDashboard() {
                 {/* USERS */}
                 <div className="userPanel">
 
-                    <h2>Users</h2>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <h2>Users</h2>
+                        <span style={{ color: "#8b5cf6", fontWeight: "600" }}>
+                            Total: {users.length}
+                        </span>
+                    </div>
 
                     {users.length === 0 && <p>No users found</p>}
 
@@ -193,7 +213,17 @@ function AdminDashboard() {
                             <p>Target: {g.target}</p>
                             <p>Completed: {g.completed}</p>
 
+                            {/* 🔥 DELETE BUTTON */}
+                            <button
+                                className="delete-btn"
+                                onClick={() => deleteGoal(g.id)}
+                                style={{ marginTop: "10px" }}
+                            >
+                                Delete Goal
+                            </button>
+
                         </div>
+
 
                     ))}
 
