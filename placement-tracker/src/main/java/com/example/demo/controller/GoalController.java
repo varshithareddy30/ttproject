@@ -81,15 +81,29 @@ public class GoalController {
         progressRepo.save(progress);
 
         // 🔥 ALSO UPDATE GOAL (UI fix)
-        int newCompleted = goal.getCompleted() + score;
-
-        if(newCompleted > goal.getTarget()){
-            newCompleted = goal.getTarget();
-        }
-
-        goal.setCompleted(newCompleted);
-        service.saveGoal(goal);
+        
 
         return "Score saved";
+    }
+    @GetMapping("/withProgress/{studentId}")
+    public List<Goal> getGoalsWithProgress(@PathVariable Long studentId){
+
+        List<Goal> goals = service.getGlobalGoals();
+        List<Goal> userGoals = service.getStudentGoals(studentId);
+
+        goals.addAll(userGoals);
+
+        for(Goal g : goals){
+
+            Progress p = progressRepo.findByStudentIdAndGoalId(studentId, g.getId());
+
+            if(p != null){
+                g.setCompleted(p.getScore()); // 🔥 attach user score
+            } else {
+                g.setCompleted(0);
+            }
+        }
+
+        return goals;
     }
 }

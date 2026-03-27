@@ -40,8 +40,8 @@ function Dashboard() {
                 setDomains([])
             })
 
-        // 🔥 GOALS (USER + GLOBAL)
-        axios.get(`/goal/all/${studentId}`)
+        // GOALS (USER + GLOBAL)
+        axios.get(`/goal/withProgress/${studentId}`)
             .then(res => {
                 console.log("Goals API:", res.data)
                 setGoals(Array.isArray(res.data) ? res.data : [])
@@ -68,8 +68,11 @@ function Dashboard() {
         let totalCompleted = 0
 
         goals.forEach(g => {
-            totalTarget += g.target || 0
-            totalCompleted += g.completed || 0
+            // ❗ Ignore global goals (they no longer store completed)
+            if (!g.globalGoal) {
+                totalTarget += g.target || 0
+                totalCompleted += g.completed || 0
+            }
         })
 
         if (totalTarget === 0) return 0
@@ -116,9 +119,12 @@ function Dashboard() {
 
                 {goals.map(goal => {
 
-                    let percent = goal.target
-                        ? Math.round((goal.completed / goal.target) * 100)
-                        : 0
+                    // ✅ FIXED percent logic
+                    let percent = goal.globalGoal ? 0 : (
+                        goal.target
+                            ? Math.round((goal.completed / goal.target) * 100)
+                            : 0
+                    )
 
                     return (
 
@@ -144,9 +150,10 @@ function Dashboard() {
                                 ></div>
                             </div>
 
+                            {/* ✅ FIXED TEXT */}
                             <p>
                                 {goal.globalGoal
-                                    ? "Progress tracked per user"
+                                    ? "Test not attempted yet"
                                     : `${goal.completed} / ${goal.target}`}
                             </p>
 

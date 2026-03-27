@@ -94,6 +94,9 @@ function Test() {
                     if (parsed?.score === 1) {
                         score++
                     }
+                    if (parsed?.feedback) {
+                        alert(parsed.feedback)
+                    }
 
                 } catch (err) {
                     console.error("Evaluation error", err)
