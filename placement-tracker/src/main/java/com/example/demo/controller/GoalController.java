@@ -79,6 +79,15 @@ public class GoalController {
         progress.setStudent(student);
         progress.setScore(score);
         progressRepo.save(progress);
+     // 🔥 ALSO UPDATE GOAL FOR UI
+        int newCompleted = goal.getCompleted() + score;
+
+        if(newCompleted > goal.getTarget()){
+            newCompleted = goal.getTarget();
+        }
+
+        goal.setCompleted(newCompleted);
+        service.saveGoal(goal);
 
         // 🔥 ALSO UPDATE GOAL (UI fix)
         
@@ -95,7 +104,7 @@ public class GoalController {
 
         for(Goal g : goals){
 
-            Progress p = progressRepo.findByStudentIdAndGoalId(studentId, g.getId());
+            Progress p = progressRepo.findByStudent_IdAndGoal_Id(studentId, g.getId());
 
             if(p != null){
                 g.setCompleted(p.getScore()); // 🔥 attach user score

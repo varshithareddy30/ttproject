@@ -1,5 +1,5 @@
 package com.example.demo.service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.model.Goal;
 import com.example.demo.model.Student;
 import com.example.demo.repository.GoalRepository;
+import com.example.demo.repository.ProgressRepository;
 import com.example.demo.repository.StudentRepository;
 
 @Service
@@ -57,10 +58,20 @@ public class GoalService {
     }
 
     // ✅ DELETE GOAL
+    @Autowired
+    private ProgressRepository progressRepo;
+
+    @Transactional
     public void deleteGoal(Long id){
+
         if(!repo.existsById(id)){
             throw new RuntimeException("Goal not found");
         }
+
+        // delete progress first
+        progressRepo.deleteByGoal_Id(id);
+
+        // then delete goal
         repo.deleteById(id);
     }
 

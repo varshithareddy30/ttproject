@@ -6,6 +6,7 @@ import com.example.demo.model.Progress;
 public interface ProgressRepository extends JpaRepository<Progress, Long> {
 
     void deleteByStudentId(Long studentId);
-    Progress findByStudentIdAndGoalId(Long studentId, Long goalId);
+    void deleteByGoal_Id(Long goalId);
+    Progress findByStudent_IdAndGoal_Id(Long studentId, Long goalId);
 
 }
