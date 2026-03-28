@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.Student;
 import com.example.demo.model.Goal;
+import com.example.demo.model.Progress;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.GoalService;
 import com.example.demo.repository.GoalRepository;
@@ -43,9 +44,24 @@ public class AdminController {
     // ✅ GET USER GOALS
     @GetMapping("/goals/{id}")
     public List<Goal> getUserGoals(@PathVariable Long id){
-    	List<Goal> personal=goalRepo.findByStudentId(id);
-    	List<Goal> global=goalRepo.findByGlobalGoalTrue();
-    	personal.addAll(global);
+
+        List<Goal> personal = goalRepo.findByStudentId(id);
+        List<Goal> global = goalRepo.findByGlobalGoalTrue();
+
+        personal.addAll(global);
+
+        // 🔥 FIX: attach correct progress per user
+        for(Goal g : personal){
+
+            Progress p = progressRepo.findByStudent_IdAndGoal_Id(id, g.getId());
+
+            if(p != null){
+                g.setCompleted(p.getScore());   // user-specific score
+            } else {
+                g.setCompleted(0);              // not attempted
+            }
+        }
+
         return personal;
     }
 
