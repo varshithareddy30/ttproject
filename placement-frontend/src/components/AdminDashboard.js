@@ -9,7 +9,6 @@ function AdminDashboard() {
     const [selectedGoals, setSelectedGoals] = useState([])
     const [selectedUser, setSelectedUser] = useState(null)
 
-    // ✅ NEW STATES
     const [showForm, setShowForm] = useState(false)
     const [title, setTitle] = useState("")
     const [type, setType] = useState("")
@@ -46,7 +45,6 @@ function AdminDashboard() {
         }
     }
 
-    // ✅ CREATE GLOBAL GOAL
     const createGlobalGoal = async () => {
 
         if (!title || !type || !target) {
@@ -55,7 +53,6 @@ function AdminDashboard() {
         }
 
         try {
-
             await axios.post("/admin/createGlobalGoal", {
                 title,
                 type,
@@ -75,16 +72,14 @@ function AdminDashboard() {
             alert("Error creating goal")
         }
     }
+
     const deleteGoal = async (goalId) => {
 
         if (!window.confirm("Delete this goal?")) return
 
         try {
             await axios.delete(`/goal/${goalId}`)
-
-            // UI update
             setSelectedGoals(selectedGoals.filter(g => g.id !== goalId))
-
         } catch (err) {
             console.error("Delete error", err)
             alert("Error deleting goal")
@@ -100,8 +95,6 @@ function AdminDashboard() {
                 <h1 className="adminTitle">Admin Dashboard</h1>
 
                 <div style={{ display: "flex", gap: "10px" }}>
-
-                    {/* ✅ NEW BUTTON */}
                     <button className="add-goal-btn" onClick={() => setShowForm(!showForm)}>
                         {showForm ? "Close" : "+ Global Goal"}
                     </button>
@@ -109,14 +102,12 @@ function AdminDashboard() {
                     <button className="logout-btn" onClick={handleLogout}>
                         Logout
                     </button>
-
                 </div>
             </div>
 
-            {/* ✅ GLOBAL GOAL FORM */}
+            {/* CREATE GOAL */}
             {showForm && (
                 <div className="goalCard" style={{ margin: "20px" }}>
-
                     <h2>Create Global Goal</h2>
 
                     <input
@@ -141,7 +132,6 @@ function AdminDashboard() {
                     <button onClick={createGlobalGoal}>
                         Create Goal
                     </button>
-
                 </div>
             )}
 
@@ -157,30 +147,22 @@ function AdminDashboard() {
                         </span>
                     </div>
 
-                    {users.length === 0 && <p>No users found</p>}
-
                     {users.map(u => (
-
                         <div key={u.id} className="userCard">
-
                             <div>
                                 <b>{u.name}</b>
                                 <p>{u.email}</p>
                             </div>
 
                             <div className="adminBtns">
-
                                 <button
                                     className="viewBtn"
                                     onClick={() => viewGoals(u.id, u.name)}
                                 >
                                     View Goals
                                 </button>
-
                             </div>
-
                         </div>
-
                     ))}
 
                 </div>
@@ -192,47 +174,55 @@ function AdminDashboard() {
                         {selectedUser ? `${selectedUser}'s Goals` : "User Goals"}
                     </h2>
 
-                    {selectedGoals.length === 0 && (
-                        <p>No goals selected</p>
-                    )}
+                    {selectedGoals.length === 0 && <p>No goals selected</p>}
 
-                    {selectedGoals.map(g => (
+                    {selectedGoals.map(g => {
 
-                        <div key={g.id} className="goalCard">
+                        const completed = g.completed || 0
+                        const target = g.target || 1
+                        const percent = Math.round((completed / target) * 100)
 
-                            <b>{g.title}</b>
+                        return (
+                            <div key={g.id} className="goalCard">
 
-                            {/* ✅ SHOW GLOBAL TAG */}
-                            {g.globalGoal && (
-                                <span style={{ color: "#8b5cf6", marginLeft: "10px" }}>
-                                    GLOBAL
-                                </span>
-                            )}
+                                <b>{g.title}</b>
 
-                            <p>Type: {g.type}</p>
-                            <p>Target: {g.target}</p>
-                            <p>Completed: {g.completed}</p>
+                                {g.globalGoal && (
+                                    <span style={{ color: "#8b5cf6", marginLeft: "10px" }}>
+                                        GLOBAL
+                                    </span>
+                                )}
 
-                            {/* 🔥 DELETE BUTTON */}
-                            <button
-                                className="delete-btn"
-                                onClick={() => deleteGoal(g.id)}
-                                style={{ marginTop: "10px" }}
-                            >
-                                Delete Goal
-                            </button>
+                                <p>Type: {g.type}</p>
 
-                        </div>
+                                {/* ✅ Progress Bar */}
+                                <div className="progress-bar">
+                                    <div
+                                        className="progress-fill"
+                                        style={{ width: `${percent}%` }}
+                                    ></div>
+                                </div>
 
+                                {/* ✅ Correct Score */}
+                                <p>{completed} / {target}</p>
 
-                    ))}
+                                <button
+                                    className="delete-btn"
+                                    onClick={() => deleteGoal(g.id)}
+                                    style={{ marginTop: "10px" }}
+                                >
+                                    Delete Goal
+                                </button>
+
+                            </div>
+                        )
+                    })}
 
                 </div>
 
             </div>
 
         </div>
-
     )
 }
 
