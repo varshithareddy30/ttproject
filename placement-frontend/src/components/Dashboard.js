@@ -12,7 +12,6 @@ function Dashboard() {
     const studentId = Number(localStorage.getItem("studentId"))
     const navigate = useNavigate()
 
-    // eslint-disable-next-line
     useEffect(() => {
         fetchData()
     }, [])
@@ -40,7 +39,7 @@ function Dashboard() {
                 setDomains([])
             })
 
-        // GOALS (USER + GLOBAL)
+        // GOALS (USER + GLOBAL WITH PROGRESS)
         axios.get(`/goal/withProgress/${studentId}`)
             .then(res => {
                 console.log("Goals API:", res.data)
@@ -68,11 +67,11 @@ function Dashboard() {
         let totalCompleted = 0
 
         goals.forEach(g => {
-            // ❗ Ignore global goals (they no longer store completed)
-            if (!g.globalGoal) {
-                totalTarget += g.target || 0
-                totalCompleted += g.completed || 0
-            }
+            const completed = g.completed || 0
+            const target = g.target || 0
+
+            totalTarget += target
+            totalCompleted += completed
         })
 
         if (totalTarget === 0) return 0
@@ -101,7 +100,10 @@ function Dashboard() {
                 <div className="card"><h3>Target Company</h3><p>{profile?.targetCompany}</p></div>
                 <div className="card"><h3>Preferred Role</h3><p>{profile?.role}</p></div>
                 <div className="card"><h3>Preferred Domain</h3><p>{profile?.preferredDomain}</p></div>
-                <div className="card score-card"><h3>Readiness Score</h3><p>{calculateScore()}%</p></div>
+                <div className="card score-card">
+                    <h3>Readiness Score</h3>
+                    <p>{calculateScore()}%</p>
+                </div>
             </div>
 
             {/* GOALS */}
@@ -119,12 +121,10 @@ function Dashboard() {
 
                 {goals.map(goal => {
 
-                    // ✅ FIXED percent logic
-                    let percent = goal.globalGoal ? 0 : (
-                        goal.target
-                            ? Math.round((goal.completed / goal.target) * 100)
-                            : 0
-                    )
+                    const completed = goal.completed || 0
+                    const target = goal.target || 1
+
+                    const percent = Math.round((completed / target) * 100)
 
                     return (
 
@@ -150,11 +150,8 @@ function Dashboard() {
                                 ></div>
                             </div>
 
-                            {/* ✅ FIXED TEXT */}
                             <p>
-                                {goal.globalGoal
-                                    ? "Test not attempted yet"
-                                    : `${goal.completed} / ${goal.target}`}
+                                {completed} / {target}
                             </p>
 
                             <div className="goal-buttons">
